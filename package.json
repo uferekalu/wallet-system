@@ -11,7 +11,7 @@
     "migrate:reset": "knex migrate:rollback && npm run migrate"
   },
   "keywords": [],
-  "author": "",
+  "author": "Kalu Ufere",
   "license": "ISC",
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
