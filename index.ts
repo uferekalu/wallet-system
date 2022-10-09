@@ -3,6 +3,7 @@ import helmet from 'helmet'
 import compression from 'compression'
 import cors from 'cors'
 import { config } from 'dotenv'
+import routes from './routes'
 config()
 
 const app = express()
@@ -19,10 +20,7 @@ app.use(compression())
 app.use(cors())
 app.options("*", cors())
 
-// test route
-app.get("/", (req: Request, res: Response) => {
-    res.send("Hello Api Working")
-})
+app.use(routes)
 
 const PORT = process.env.PORT || "3000"
 
