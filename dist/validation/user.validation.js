@@ -46,26 +46,6 @@ const registerValidation = [
     (0, express_validator_1.sanitizeBody)("last_name").escape(),
     (0, express_validator_1.sanitizeBody)("email").escape(),
     (0, express_validator_1.sanitizeBody)("password").escape(),
-    //   check("first_name", "First name is required").not().isEmpty(),
-    //   check("last_name", "Last name is required").not().isEmpty(),
-    //   check("email", "Please enter a valid email")
-    //     .isEmpty()
-    //     .normalizeEmail({ gmail_remove_dots: true })
-    //     .custom((value) => {
-    //       return db
-    //         .select("*")
-    //         .from("users")
-    //         .where("email", value)
-    //         .first()
-    //         .then((user: any) => {
-    //           if (user) {
-    //             return Promise.reject("Email is already in use");
-    //           }
-    //         });
-    //     }),
-    //   check("password", "Password must be 6 or more characters").isLength({
-    //     min: 6,
-    //   }),
 ];
 exports.registerValidation = registerValidation;
 const loginValidation = [

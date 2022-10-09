@@ -20,6 +20,8 @@ const auth = async (req: IReqAuth, res: Response, next: NextFunction) => {
     )) as JwtPayload;
     const user = await findUserByEmail(decodeToken.email);
 
+    console.log("auth user: ", user)
+
     if (!user) {
       return res.status(httpStatus.UNAUTHORIZED).send({
         success: false,

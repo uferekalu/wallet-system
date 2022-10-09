@@ -27,6 +27,7 @@ const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
         }
         const decodeToken = (yield jsonwebtoken_1.default.verify(token.split(" ")[1], jwt_1.default.appKey));
         const user = yield (0, user_service_1.findUserByEmail)(decodeToken.email);
+        console.log("auth user: ", user);
         if (!user) {
             return res.status(http_status_1.default.UNAUTHORIZED).send({
                 success: false,

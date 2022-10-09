@@ -41,26 +41,7 @@ const registerValidation = [
   sanitizeBody("last_name").escape(),
   sanitizeBody("email").escape(),
   sanitizeBody("password").escape(),
-  //   check("first_name", "First name is required").not().isEmpty(),
-  //   check("last_name", "Last name is required").not().isEmpty(),
-  //   check("email", "Please enter a valid email")
-  //     .isEmpty()
-  //     .normalizeEmail({ gmail_remove_dots: true })
-  //     .custom((value) => {
-  //       return db
-  //         .select("*")
-  //         .from("users")
-  //         .where("email", value)
-  //         .first()
-  //         .then((user: any) => {
-  //           if (user) {
-  //             return Promise.reject("Email is already in use");
-  //           }
-  //         });
-  //     }),
-  //   check("password", "Password must be 6 or more characters").isLength({
-  //     min: 6,
-  //   }),
+  
 ];
 
 const loginValidation = [
