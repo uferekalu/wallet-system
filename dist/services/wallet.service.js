@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.withdrawFund = exports.transferFund = exports.verifyWalletFunding = exports.fundWallet = exports.setWalletPin = exports.createWallet = void 0;
+exports.getWalletBalance = exports.withdrawFund = exports.transferFund = exports.verifyWalletFunding = exports.fundWallet = exports.setWalletPin = exports.createWallet = void 0;
 const dotenv_1 = require("dotenv");
 const db_1 = __importDefault(require("../config/db"));
 const randomstring_1 = __importDefault(require("randomstring"));
@@ -203,3 +203,9 @@ const withdrawFund = (walletData) => __awaiter(void 0, void 0, void 0, function*
     });
 });
 exports.withdrawFund = withdrawFund;
+const getWalletBalance = (walletData) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = walletData.user;
+    const wallet = yield (0, db_1.default)("wallets").where("user_id", user.id).first();
+    return wallet;
+});
+exports.getWalletBalance = getWalletBalance;

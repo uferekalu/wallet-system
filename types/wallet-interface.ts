@@ -36,3 +36,7 @@ export interface WalletDataWithdraw {
     amount: number
     wallet_pin: number 
 }
+
+export interface WalletBalance {
+    user: User
+}

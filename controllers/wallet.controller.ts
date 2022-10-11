@@ -4,6 +4,7 @@ import { validationResult } from "express-validator";
 import httpStatus from "http-status";
 import {
   fundWallet,
+  getWalletBalance,
   setWalletPin,
   transferFund,
   verifyWalletFunding,
@@ -155,10 +156,30 @@ const withdrawTheFund = async (req: IReqAuth, res: Response) => {
   }
 };
 
+const getTheWalletBalance = async (req: IReqAuth, res: Response) => {
+  try {
+    const walletData = {
+      user: req.user!,
+    };
+
+    const wallet = await getWalletBalance(walletData);
+
+    return res.status(httpStatus.OK).send({
+      success: true,
+      message: "Wallet balance returned successfully",
+      balance: wallet.balance,
+    });
+  } catch (error) {
+    console.error("Get wallet balance: ", error);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
+  }
+};
+
 export {
   setTheWalletPin,
   fundTheWallet,
   verifyTheWalletFunding,
   transferTheFund,
-  withdrawTheFund
+  withdrawTheFund,
+  getTheWalletBalance,
 };

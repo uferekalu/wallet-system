@@ -14,4 +14,5 @@ router.post("/wallet/fund", [auth_1.default], set_wallet_pin_1.setWalletPinMiddl
 router.get("/wallet/verify", [auth_1.default], wallet_controller_1.verifyTheWalletFunding);
 router.post("/wallet/transfer", [auth_1.default], set_wallet_pin_1.setWalletPinMiddleWare, wallet_validation_1.transferFund, wallet_controller_1.transferTheFund);
 router.post("/wallet/withdraw", [auth_1.default], set_wallet_pin_1.setWalletPinMiddleWare, wallet_validation_1.withdrawFund, wallet_controller_1.withdrawTheFund);
+router.get("/wallet/balance", [auth_1.default], set_wallet_pin_1.setWalletPinMiddleWare, wallet_controller_1.getTheWalletBalance);
 exports.default = router;

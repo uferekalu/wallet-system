@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.withdrawTheFund = exports.transferTheFund = exports.verifyTheWalletFunding = exports.fundTheWallet = exports.setTheWalletPin = void 0;
+exports.getTheWalletBalance = exports.withdrawTheFund = exports.transferTheFund = exports.verifyTheWalletFunding = exports.fundTheWallet = exports.setTheWalletPin = void 0;
 const express_validator_1 = require("express-validator");
 const http_status_1 = __importDefault(require("http-status"));
 const wallet_service_1 = require("../services/wallet.service");
@@ -149,3 +149,21 @@ const withdrawTheFund = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.withdrawTheFund = withdrawTheFund;
+const getTheWalletBalance = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const walletData = {
+            user: req.user,
+        };
+        const wallet = yield (0, wallet_service_1.getWalletBalance)(walletData);
+        return res.status(http_status_1.default.OK).send({
+            success: true,
+            message: "Wallet balance returned successfully",
+            balance: wallet.balance,
+        });
+    }
+    catch (error) {
+        console.error("Get wallet balance: ", error);
+        return res.status(http_status_1.default.INTERNAL_SERVER_ERROR).send(error);
+    }
+});
+exports.getTheWalletBalance = getTheWalletBalance;

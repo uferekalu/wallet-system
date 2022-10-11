@@ -1,6 +1,7 @@
 import express from "express";
 import {
   fundTheWallet,
+  getTheWalletBalance,
   setTheWalletPin,
   transferTheFund,
   verifyTheWalletFunding,
@@ -40,5 +41,6 @@ router.post(
   withdrawFund,
   withdrawTheFund
 );
+router.get("/wallet/balance", [auth], setWalletPinMiddleWare, getTheWalletBalance)
 
 export default router;

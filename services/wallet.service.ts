@@ -4,6 +4,7 @@ import {
   FundData,
   VerifyWalletData,
   Wallet,
+  WalletBalance,
   WalletData,
   WalletDataTransfer,
   WalletDataWithdraw,
@@ -249,6 +250,13 @@ const withdrawFund = async (walletData: WalletDataWithdraw) => {
   });
 };
 
+const getWalletBalance = async (walletData: WalletBalance) => {
+    const user = walletData.user
+    const wallet = await db("wallets").where("user_id", user.id).first()
+
+    return wallet;
+}
+
 export {
   createWallet,
   setWalletPin,
@@ -256,4 +264,5 @@ export {
   verifyWalletFunding,
   transferFund,
   withdrawFund,
+  getWalletBalance
 };
