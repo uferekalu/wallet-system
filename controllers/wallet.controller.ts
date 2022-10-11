@@ -2,7 +2,12 @@ import { Response } from "express";
 import { IReqAuth } from "../types/user-interface";
 import { validationResult } from "express-validator";
 import httpStatus from "http-status";
-import { fundWallet, setWalletPin, verifyWalletFunding } from "../services/wallet.service";
+import {
+  fundWallet,
+  setWalletPin,
+  transferFund,
+  verifyWalletFunding,
+} from "../services/wallet.service";
 
 const setTheWalletPin = async (req: IReqAuth, res: Response) => {
   try {
@@ -62,32 +67,66 @@ const fundTheWallet = async (req: IReqAuth, res: Response) => {
 
 const verifyTheWalletFunding = async (req: IReqAuth, res: Response) => {
   try {
-    const { transaction_id, status, tx_ref } = req.query
+    const { transaction_id, status, tx_ref } = req.query;
 
-    if (!transaction_id || !status || !tx_ref ) {
+    if (!transaction_id || !status || !tx_ref) {
       return res.status(httpStatus.BAD_REQUEST).send({
         success: false,
-        message: "Could not verify payment"
-      })
+        message: "Could not verify payment",
+      });
     }
 
     const walletData = {
       transaction_id: Number(transaction_id),
       status,
       tx_ref,
-      user: req.user!
-    }
+      user: req.user!,
+    };
 
-    await verifyWalletFunding(walletData)
+    await verifyWalletFunding(walletData);
 
     return res.status(httpStatus.CREATED).send({
       success: true,
-      message: "Wallent funded successfully!"
-    })
+      message: "Wallent funded successfully!",
+    });
   } catch (error) {
-    console.error("Verify walleting funding error: ", error)
-    return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error)
+    console.error("Verify walleting funding error: ", error);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
   }
-}
+};
 
-export { setTheWalletPin, fundTheWallet, verifyTheWalletFunding };
+const transferTheFund = async (req: IReqAuth, res: Response) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ errors: errors.array() });
+    }
+    const { amount, wallet_code_or_email, wallet_pin } = req.body;
+
+    const walletData = {
+      amount,
+      wallet_code_or_email,
+      wallet_pin,
+      user: req.user!,
+    };
+
+    await transferFund(walletData);
+
+    return res.status(httpStatus.CREATED).send({
+      success: true,
+      message: "Fund Transfer Successful",
+    });
+  } catch (error) {
+    console.error("Transfer fund Error ", error);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
+  }
+};
+
+export {
+  setTheWalletPin,
+  fundTheWallet,
+  verifyTheWalletFunding,
+  transferTheFund,
+};

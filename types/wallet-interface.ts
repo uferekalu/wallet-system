@@ -23,3 +23,10 @@ export interface VerifyWalletData {
     user: User
     transaction_id: number
 }
+
+export interface WalletDataTransfer {
+    user: User
+    wallet_code_or_email: string | number
+    amount: number
+    wallet_pin: number
+}

@@ -12,4 +12,5 @@ const router = express_1.default.Router();
 router.post("/wallet/setpin", [auth_1.default], wallet_validation_1.setWalletPin, wallet_controller_1.setTheWalletPin);
 router.post("/wallet/fund", [auth_1.default], set_wallet_pin_1.setWalletPinMiddleWare, wallet_validation_1.fundWallet, wallet_controller_1.fundTheWallet);
 router.get("/wallet/verify", [auth_1.default], wallet_controller_1.verifyTheWalletFunding);
+router.post("/wallet/transfer", [auth_1.default], set_wallet_pin_1.setWalletPinMiddleWare, wallet_validation_1.transferFund, wallet_controller_1.transferTheFund);
 exports.default = router;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fundWallet = exports.setWalletPin = void 0;
+exports.transferFund = exports.fundWallet = exports.setWalletPin = void 0;
 const express_validator_1 = require("express-validator");
 const setWalletPin = [
     (0, express_validator_1.check)("pin", "Pin is required")
@@ -35,3 +35,15 @@ const fundWallet = [
         .withMessage("amount must be a currency"),
 ];
 exports.fundWallet = fundWallet;
+const transferFund = [
+    (0, express_validator_1.check)("amount", "Amount is required")
+        .not()
+        .isEmpty()
+        .isCurrency()
+        .withMessage("amount must be a currency"),
+    (0, express_validator_1.check)("wallet_code_or_email", "Please provide either recipient wallet code or email")
+        .not()
+        .isEmpty(),
+    (0, express_validator_1.check)("wallet_pin", "Wallet pin is required").not().isEmpty(),
+];
+exports.transferFund = transferFund;

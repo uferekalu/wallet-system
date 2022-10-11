@@ -32,4 +32,19 @@ const fundWallet = [
     .withMessage("amount must be a currency"),
 ];
 
-export { setWalletPin, fundWallet };
+const transferFund = [
+  check("amount", "Amount is required")
+    .not()
+    .isEmpty()
+    .isCurrency()
+    .withMessage("amount must be a currency"),
+  check(
+    "wallet_code_or_email",
+    "Please provide either recipient wallet code or email"
+  )
+    .not()
+    .isEmpty(),
+  check("wallet_pin", "Wallet pin is required").not().isEmpty(),
+];
+
+export { setWalletPin, fundWallet, transferFund };

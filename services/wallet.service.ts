@@ -1,6 +1,12 @@
 import { config } from "dotenv";
 import db from "../config/db";
-import { FundData, VerifyWalletData, Wallet, WalletData } from "../types/wallet-interface";
+import {
+  FundData,
+  VerifyWalletData,
+  Wallet,
+  WalletData,
+  WalletDataTransfer,
+} from "../types/wallet-interface";
 import randomstring from "randomstring";
 import bcrypt from "bcryptjs";
 import { makePayment, verifyPayment } from "../helpers/payment.helpers";
@@ -69,7 +75,7 @@ const verifyWalletFunding = async (walletData: VerifyWalletData) => {
 
   const payment = await verifyPayment(walletData.transaction_id);
 
-  console.log("payment details: ", payment)
+  console.log("payment details: ", payment);
 
   if (payment.customer.email !== user.email) {
     return Promise.reject({
@@ -102,4 +108,109 @@ const verifyWalletFunding = async (walletData: VerifyWalletData) => {
   return payment;
 };
 
-export { createWallet, setWalletPin, fundWallet, verifyWalletFunding };
+const transferFund = async (walletData: WalletDataTransfer) => {
+  const sender = walletData.user;
+  const walletCodeOrEmail = walletData.wallet_code_or_email;
+  const amount = walletData.amount;
+  const walletPin = walletData.wallet_pin;
+
+  let recipient;
+  if (walletCodeOrEmail.toString().includes("@")) {
+    recipient = await db("users").where("email", walletCodeOrEmail).first();
+  } else {
+    const recipientWallet = await db("wallets")
+      .where("wallet_code", walletCodeOrEmail)
+      .first();
+
+    const receipientID = recipientWallet?.user_id || null;
+
+    recipient = await db("users").where("id", receipientID).first();
+  }
+
+  if (!recipient) {
+    return Promise.reject({
+      message: "Recipient not found",
+      success: false,
+    });
+  }
+
+  if (sender.id === recipient.id) {
+    return Promise.reject({
+      success: false,
+      message: "You cannot transfer fund to yourself",
+    });
+  }
+
+  const senderWallet = await db("wallets").where("user_id", sender.id).first();
+
+  if (senderWallet.balance < amount) {
+    return Promise.reject({
+      message: "Insufficient Fund",
+      success: false,
+    });
+  }
+
+  // Check if wallet pin is correct
+  const match = await bcrypt.compare(
+    walletPin.toString(),
+    senderWallet.wallet_pin
+  );
+
+  if (!match) {
+    return Promise.reject({
+      message: "Incorrect pin",
+      success: false,
+    });
+  }
+
+  const generatedTransactionReference = randomstring.generate({
+    length: 10,
+    charset: "alphanumeric",
+    capitalization: "uppercase",
+  });
+
+  const generatedTransactionCode = randomstring.generate({
+    length: 7,
+    charset: "numeric",
+  });
+
+  // Deduct amount from sender wallet
+  await db("wallets").where("user_id", sender.id).decrement("balance", amount);
+
+  // Record the transaction for sender
+  await db("transactions").insert({
+    user_id: sender.id,
+    transaction_code: generatedTransactionCode,
+    transaction_reference: `PID-${generatedTransactionReference}`,
+    amount: amount,
+    description: "Fund Transfer",
+    status: "successful",
+    payment_method: "wallet",
+    is_inflow: false,
+  });
+
+  // Add to receipient wallet
+  await db("wallets")
+    .where("user_id", recipient.id)
+    .increment("balance", amount);
+
+  // Record the transaction for recipient
+  await db("transactions").insert({
+    user_id: recipient.id,
+    transaction_code: generatedTransactionCode,
+    transaction_reference: `PID-${generatedTransactionReference}`,
+    amount: amount,
+    description: "Fund Transfer",
+    status: "successful",
+    payment_method: "wallet",
+    is_inflow: true,
+  });
+};
+
+export {
+  createWallet,
+  setWalletPin,
+  fundWallet,
+  verifyWalletFunding,
+  transferFund,
+};

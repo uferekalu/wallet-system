@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyTheWalletFunding = exports.fundTheWallet = exports.setTheWalletPin = void 0;
+exports.transferTheFund = exports.verifyTheWalletFunding = exports.fundTheWallet = exports.setTheWalletPin = void 0;
 const express_validator_1 = require("express-validator");
 const http_status_1 = __importDefault(require("http-status"));
 const wallet_service_1 = require("../services/wallet.service");
@@ -73,19 +73,19 @@ const verifyTheWalletFunding = (req, res) => __awaiter(void 0, void 0, void 0, f
         if (!transaction_id || !status || !tx_ref) {
             return res.status(http_status_1.default.BAD_REQUEST).send({
                 success: false,
-                message: "Could not verify payment"
+                message: "Could not verify payment",
             });
         }
         const walletData = {
             transaction_id: Number(transaction_id),
             status,
             tx_ref,
-            user: req.user
+            user: req.user,
         };
         yield (0, wallet_service_1.verifyWalletFunding)(walletData);
         return res.status(http_status_1.default.CREATED).send({
             success: true,
-            message: "Wallent funded successfully!"
+            message: "Wallent funded successfully!",
         });
     }
     catch (error) {
@@ -94,3 +94,30 @@ const verifyTheWalletFunding = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.verifyTheWalletFunding = verifyTheWalletFunding;
+const transferTheFund = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty()) {
+            return res
+                .status(http_status_1.default.BAD_REQUEST)
+                .json({ errors: errors.array() });
+        }
+        const { amount, wallet_code_or_email, wallet_pin } = req.body;
+        const walletData = {
+            amount,
+            wallet_code_or_email,
+            wallet_pin,
+            user: req.user,
+        };
+        yield (0, wallet_service_1.transferFund)(walletData);
+        return res.status(http_status_1.default.CREATED).send({
+            success: true,
+            message: "Fund Transfer Successful",
+        });
+    }
+    catch (error) {
+        console.error("Transfer fund Error ", error);
+        return res.status(http_status_1.default.INTERNAL_SERVER_ERROR).send(error);
+    }
+});
+exports.transferTheFund = transferTheFund;
