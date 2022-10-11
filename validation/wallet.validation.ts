@@ -24,4 +24,12 @@ const setWalletPin = [
     }),
 ];
 
-export { setWalletPin };
+const fundWallet = [
+  check("amount", "Amount is required")
+    .not()
+    .isEmpty()
+    .isCurrency()
+    .withMessage("amount must be a currency"),
+];
+
+export { setWalletPin, fundWallet };

@@ -11,4 +11,15 @@ export interface Wallet {
 export interface WalletData {
     user: User
     pin: number
+    amount?: number
+}
+
+export interface FundData {
+    user: User
+    amount: number
+}
+
+export interface VerifyWalletData {
+    user: User
+    transaction_id: number
 }
