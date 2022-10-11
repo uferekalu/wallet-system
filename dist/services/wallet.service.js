@@ -18,17 +18,13 @@ const db_1 = __importDefault(require("../config/db"));
 const randomstring_1 = __importDefault(require("randomstring"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const payment_helpers_1 = require("../helpers/payment.helpers");
+const randomString_1 = require("../helpers/randomString");
 (0, dotenv_1.config)();
 const createWallet = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield db_1.default.select("*").from("users").where("id", userId).first();
-    const generatedWalletCode = randomstring_1.default.generate({
-        length: 7,
-        charset: "alphanumeric",
-        capitalization: "uppercase",
-    });
     const wallet = yield (0, db_1.default)("wallets").insert({
         user_id: user.id,
-        wallet_code: generatedWalletCode,
+        wallet_code: (0, randomString_1.randomlyGeneratedString)(7),
     });
     return wallet;
 });
@@ -136,11 +132,6 @@ const transferFund = (walletData) => __awaiter(void 0, void 0, void 0, function*
             success: false,
         });
     }
-    const generatedTransactionReference = randomstring_1.default.generate({
-        length: 10,
-        charset: "alphanumeric",
-        capitalization: "uppercase",
-    });
     const generatedTransactionCode = randomstring_1.default.generate({
         length: 7,
         charset: "numeric",
@@ -151,7 +142,7 @@ const transferFund = (walletData) => __awaiter(void 0, void 0, void 0, function*
     yield (0, db_1.default)("transactions").insert({
         user_id: sender.id,
         transaction_code: generatedTransactionCode,
-        transaction_reference: `PID-${generatedTransactionReference}`,
+        transaction_reference: `PID-${(0, randomString_1.randomlyGeneratedString)(10)}`,
         amount: amount,
         description: "Fund Transfer",
         status: "successful",
@@ -166,7 +157,7 @@ const transferFund = (walletData) => __awaiter(void 0, void 0, void 0, function*
     yield (0, db_1.default)("transactions").insert({
         user_id: recipient.id,
         transaction_code: generatedTransactionCode,
-        transaction_reference: `PID-${generatedTransactionReference}`,
+        transaction_reference: `PID-${(0, randomString_1.randomlyGeneratedString)(10)}`,
         amount: amount,
         description: "Fund Transfer",
         status: "successful",

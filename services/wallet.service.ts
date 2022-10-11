@@ -15,21 +15,16 @@ import {
   verifyPayment,
   withdrawPayment,
 } from "../helpers/payment.helpers";
+import { randomlyGeneratedString } from "../helpers/randomString";
 
 config();
 
 const createWallet = async (userId: number): Promise<Wallet> => {
   const user = await db.select("*").from("users").where("id", userId).first();
 
-  const generatedWalletCode = randomstring.generate({
-    length: 7,
-    charset: "alphanumeric",
-    capitalization: "uppercase",
-  });
-
   const wallet = await db("wallets").insert({
     user_id: user.id,
-    wallet_code: generatedWalletCode,
+    wallet_code: randomlyGeneratedString(7),
   });
 
   return wallet;
@@ -168,12 +163,6 @@ const transferFund = async (walletData: WalletDataTransfer) => {
     });
   }
 
-  const generatedTransactionReference = randomstring.generate({
-    length: 10,
-    charset: "alphanumeric",
-    capitalization: "uppercase",
-  });
-
   const generatedTransactionCode = randomstring.generate({
     length: 7,
     charset: "numeric",
@@ -186,7 +175,7 @@ const transferFund = async (walletData: WalletDataTransfer) => {
   await db("transactions").insert({
     user_id: sender.id,
     transaction_code: generatedTransactionCode,
-    transaction_reference: `PID-${generatedTransactionReference}`,
+    transaction_reference: `PID-${randomlyGeneratedString(10)}`,
     amount: amount,
     description: "Fund Transfer",
     status: "successful",
@@ -203,7 +192,7 @@ const transferFund = async (walletData: WalletDataTransfer) => {
   await db("transactions").insert({
     user_id: recipient.id,
     transaction_code: generatedTransactionCode,
-    transaction_reference: `PID-${generatedTransactionReference}`,
+    transaction_reference: `PID-${randomlyGeneratedString(10)}`,
     amount: amount,
     description: "Fund Transfer",
     status: "successful",

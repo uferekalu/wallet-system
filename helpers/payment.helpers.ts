@@ -1,6 +1,5 @@
 import { config } from "dotenv";
 import axios from "axios";
-import randomstring from "randomstring";
 import { User } from "../types/user-interface";
 import { randomlyGeneratedString } from "./randomString";
 
@@ -24,16 +23,11 @@ const makePayment = async (
   description: string
 ) => {
   try {
-    const generatedTransactionReference = randomstring.generate({
-      length: 10,
-      charset: "alphanumeric",
-      capitalization: "uppercase",
-    });
     const paymentLink = await axios({
       method: "post",
       url: "https://api.flutterwave.com/v3/payments",
       data: {
-        tx_ref: `PID-${generatedTransactionReference}`,
+        tx_ref: `PID-${randomlyGeneratedString(10)}`,
         amount: amount,
         currency: "NGN",
         redirect_url: redirect_url,
@@ -100,7 +94,7 @@ const withdrawPayment = async (amount: number) => {
         amount: amount,
         fee: 10.65,
         status: "NEW",
-        reference: `PID-${randomlyGeneratedString()}`,
+        reference: `PID-${randomlyGeneratedString(10)}`,
         meta: null,
         narration: "Payment for goods",
         complete_message: "",

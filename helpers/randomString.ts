@@ -1,8 +1,8 @@
 import randomstring from "randomstring";
 
-const randomlyGeneratedString = () => {
+const randomlyGeneratedString = (value: number) => {
   const generatedTransactionReference = randomstring.generate({
-    length: 10,
+    length: value,
     charset: "alphanumeric",
     capitalization: "uppercase",
   });

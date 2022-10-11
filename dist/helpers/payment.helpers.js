@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.withdrawPayment = exports.verifyPayment = exports.makePayment = void 0;
 const dotenv_1 = require("dotenv");
 const axios_1 = __importDefault(require("axios"));
-const randomstring_1 = __importDefault(require("randomstring"));
 const randomString_1 = require("./randomString");
 (0, dotenv_1.config)();
 const FlutterwaveKey = process.env.FLUTTERWAVE_KEY;
@@ -30,16 +29,11 @@ const FlutterwaveKey = process.env.FLUTTERWAVE_KEY;
  */
 const makePayment = (amount, authenticatedUser, redirect_url, description) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const generatedTransactionReference = randomstring_1.default.generate({
-            length: 10,
-            charset: "alphanumeric",
-            capitalization: "uppercase",
-        });
         const paymentLink = yield (0, axios_1.default)({
             method: "post",
             url: "https://api.flutterwave.com/v3/payments",
             data: {
-                tx_ref: `PID-${generatedTransactionReference}`,
+                tx_ref: `PID-${(0, randomString_1.randomlyGeneratedString)(10)}`,
                 amount: amount,
                 currency: "NGN",
                 redirect_url: redirect_url,
@@ -107,7 +101,7 @@ const withdrawPayment = (amount) => __awaiter(void 0, void 0, void 0, function* 
                 amount: amount,
                 fee: 10.65,
                 status: "NEW",
-                reference: `PID-${(0, randomString_1.randomlyGeneratedString)()}`,
+                reference: `PID-${(0, randomString_1.randomlyGeneratedString)(10)}`,
                 meta: null,
                 narration: "Payment for goods",
                 complete_message: "",
