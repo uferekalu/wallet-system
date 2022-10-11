@@ -6,10 +6,15 @@ import {
   Wallet,
   WalletData,
   WalletDataTransfer,
+  WalletDataWithdraw,
 } from "../types/wallet-interface";
 import randomstring from "randomstring";
 import bcrypt from "bcryptjs";
-import { makePayment, verifyPayment } from "../helpers/payment.helpers";
+import {
+  makePayment,
+  verifyPayment,
+  withdrawPayment,
+} from "../helpers/payment.helpers";
 
 config();
 
@@ -207,10 +212,59 @@ const transferFund = async (walletData: WalletDataTransfer) => {
   });
 };
 
+const withdrawFund = async (walletData: WalletDataWithdraw) => {
+  const user = walletData.user;
+  const amount = walletData.amount;
+  const walletPin = walletData.wallet_pin;
+
+  const userWallet = await db("wallets").where("user_id", user.id).first();
+
+  if (userWallet.balance < amount) {
+    return Promise.reject({
+      message: "Insufficient fund",
+      success: false,
+    });
+  }
+
+  // Check if wallet pin in correct
+  const match = await bcrypt.compare(
+    walletPin.toString(),
+    userWallet.wallet_pin
+  );
+
+  if (!match) {
+    return Promise.reject({
+      message: "Incorrect Pin",
+      success: false,
+    });
+  }
+
+  const payment = await withdrawPayment(amount);
+
+  const amountToDeduct = payment.amount + payment.fee;
+
+  // Deduct from user wallet
+  await db("wallets")
+    .where("user_id", user.id)
+    .decrement("balance", amountToDeduct);
+
+  await db("transactions").insert({
+    user_id: user.id,
+    transaction_code: payment.id,
+    transaction_reference: payment.reference,
+    amount: amountToDeduct,
+    description: "Fund Withdrawal",
+    status: "successful",
+    payment_method: "bank transfer",
+    is_inflow: false,
+  });
+};
+
 export {
   createWallet,
   setWalletPin,
   fundWallet,
   verifyWalletFunding,
   transferFund,
+  withdrawFund,
 };

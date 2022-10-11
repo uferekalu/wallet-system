@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.transferFund = exports.verifyWalletFunding = exports.fundWallet = exports.setWalletPin = exports.createWallet = void 0;
+exports.withdrawFund = exports.transferFund = exports.verifyWalletFunding = exports.fundWallet = exports.setWalletPin = exports.createWallet = void 0;
 const dotenv_1 = require("dotenv");
 const db_1 = __importDefault(require("../config/db"));
 const randomstring_1 = __importDefault(require("randomstring"));
@@ -175,3 +175,40 @@ const transferFund = (walletData) => __awaiter(void 0, void 0, void 0, function*
     });
 });
 exports.transferFund = transferFund;
+const withdrawFund = (walletData) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = walletData.user;
+    const amount = walletData.amount;
+    const walletPin = walletData.wallet_pin;
+    const userWallet = yield (0, db_1.default)("wallets").where("user_id", user.id).first();
+    if (userWallet.balance < amount) {
+        return Promise.reject({
+            message: "Insufficient fund",
+            success: false,
+        });
+    }
+    // Check if wallet pin in correct
+    const match = yield bcryptjs_1.default.compare(walletPin.toString(), userWallet.wallet_pin);
+    if (!match) {
+        return Promise.reject({
+            message: "Incorrect Pin",
+            success: false,
+        });
+    }
+    const payment = yield (0, payment_helpers_1.withdrawPayment)(amount);
+    const amountToDeduct = payment.amount + payment.fee;
+    // Deduct from user wallet
+    yield (0, db_1.default)("wallets")
+        .where("user_id", user.id)
+        .decrement("balance", amountToDeduct);
+    yield (0, db_1.default)("transactions").insert({
+        user_id: user.id,
+        transaction_code: payment.id,
+        transaction_reference: payment.reference,
+        amount: amountToDeduct,
+        description: "Fund Withdrawal",
+        status: "successful",
+        payment_method: "bank transfer",
+        is_inflow: false,
+    });
+});
+exports.withdrawFund = withdrawFund;

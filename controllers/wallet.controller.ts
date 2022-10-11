@@ -7,6 +7,7 @@ import {
   setWalletPin,
   transferFund,
   verifyWalletFunding,
+  withdrawFund,
 } from "../services/wallet.service";
 
 const setTheWalletPin = async (req: IReqAuth, res: Response) => {
@@ -124,9 +125,40 @@ const transferTheFund = async (req: IReqAuth, res: Response) => {
   }
 };
 
+const withdrawTheFund = async (req: IReqAuth, res: Response) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ errors: errors.array() });
+    }
+    const { amount, bank_code, account_number, wallet_pin } = req.body;
+
+    const walletData = {
+      amount,
+      bank_code,
+      account_number,
+      wallet_pin,
+      user: req.user!,
+    };
+
+    await withdrawFund(walletData);
+
+    return res.status(httpStatus.CREATED).send({
+      success: true,
+      message: "Withdrawal successful",
+    });
+  } catch (error) {
+    console.error("Withdraw fund error ", error);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
+  }
+};
+
 export {
   setTheWalletPin,
   fundTheWallet,
   verifyTheWalletFunding,
   transferTheFund,
+  withdrawTheFund
 };

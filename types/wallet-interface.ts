@@ -30,3 +30,9 @@ export interface WalletDataTransfer {
     amount: number
     wallet_pin: number
 }
+
+export interface WalletDataWithdraw {
+    user: User,
+    amount: number
+    wallet_pin: number 
+}

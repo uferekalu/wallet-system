@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyPayment = exports.makePayment = void 0;
+exports.withdrawPayment = exports.verifyPayment = exports.makePayment = void 0;
 const dotenv_1 = require("dotenv");
 const axios_1 = __importDefault(require("axios"));
 const randomstring_1 = __importDefault(require("randomstring"));
+const randomString_1 = require("./randomString");
 (0, dotenv_1.config)();
 const FlutterwaveKey = process.env.FLUTTERWAVE_KEY;
 /**
@@ -90,3 +91,36 @@ const verifyPayment = (transactionId) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.verifyPayment = verifyPayment;
+const withdrawPayment = (amount) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // mock withdrawal fund response
+        const mockWithdrawFundResponnse = {
+            status: "success",
+            message: "Transfer Queued Successfully",
+            data: {
+                id: 119090,
+                account_number: "0980872718",
+                bank_code: "044",
+                full_name: "James Emmanuel",
+                created_at: "2022-10-11T11:20:34.000Z",
+                currency: "NGN",
+                amount: amount,
+                fee: 10.65,
+                status: "NEW",
+                reference: `PID-${(0, randomString_1.randomlyGeneratedString)()}`,
+                meta: null,
+                narration: "Payment for goods",
+                complete_message: "",
+                requires_approval: 0,
+                is_approved: 1,
+                bank_name: "Guarantee Trust Bank",
+            },
+        };
+        return mockWithdrawFundResponnse.data;
+    }
+    catch (error) {
+        console.error("Withdraw payment error: ", error);
+        throw new Error(error);
+    }
+});
+exports.withdrawPayment = withdrawPayment;

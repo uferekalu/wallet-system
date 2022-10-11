@@ -4,6 +4,7 @@ import {
   setTheWalletPin,
   transferTheFund,
   verifyTheWalletFunding,
+  withdrawTheFund,
 } from "../controllers/wallet.controller";
 import auth from "../middlewares/auth";
 import { setWalletPinMiddleWare } from "../middlewares/set-wallet-pin";
@@ -11,6 +12,7 @@ import {
   fundWallet,
   setWalletPin,
   transferFund,
+  withdrawFund,
 } from "../validation/wallet.validation";
 
 const router = express.Router();
@@ -30,6 +32,13 @@ router.post(
   setWalletPinMiddleWare,
   transferFund,
   transferTheFund
+);
+router.post(
+  "/wallet/withdraw",
+  [auth],
+  setWalletPinMiddleWare,
+  withdrawFund,
+  withdrawTheFund
 );
 
 export default router;

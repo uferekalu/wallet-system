@@ -47,4 +47,23 @@ const transferFund = [
   check("wallet_pin", "Wallet pin is required").not().isEmpty(),
 ];
 
-export { setWalletPin, fundWallet, transferFund };
+const withdrawFund = [
+  check("amount", "Amount is required")
+    .not()
+    .isEmpty()
+    .isCurrency()
+    .withMessage("amount must be a currency"),
+  check("bank_code", "Bank code is required")
+    .not()
+    .isEmpty()
+    .isLength({ min: 3, max: 3 })
+    .withMessage("Bank code contains only 3 numbers"),
+  check("account_number", "Account number is required")
+    .not()
+    .isEmpty()
+    .isLength({ min: 10, max: 10 })
+    .withMessage("Account number contains only 10 numbers"),
+  check("wallet_pin", "Wallet pin is required").not().isEmpty(),
+];
+
+export { setWalletPin, fundWallet, transferFund, withdrawFund };
