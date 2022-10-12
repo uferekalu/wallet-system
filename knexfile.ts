@@ -5,7 +5,7 @@ import Url from 'url-parse'
 // Environment Variable Configuration 
 config()
 
-module.exports = {
+export = {
     development: {
         client: 'mysql',
         connection: {
