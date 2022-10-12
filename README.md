@@ -11,6 +11,10 @@ This is an API system built with NodeJS, TypeScript, KnexJS ORM and MySQL as the
 - Get Banks
 - Get Transactions
 
+# E-R Diagram Link
+```
+https://dbdesigner.page.link/XhBhfBrJmrHdcPwN8
+```
 # How to install
 
 ## Using Git (recommended)
