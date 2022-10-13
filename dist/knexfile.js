@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 require('ts-node/register');
 const dotenv_1 = require("dotenv");
 // Environment Variable Configuration 
