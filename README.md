@@ -76,3 +76,8 @@ This starts the server from the compiled "index.js" in dist folder
 
 # Author
 Kalu Ufere
+
+# POSTMAN LOCAL API TEST IMAGES
+```
+User registration
+```

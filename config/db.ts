@@ -1,6 +1,6 @@
 import { config } from "dotenv";
-import { attachPaginate } from 'knex-paginate'
 config()
+import { attachPaginate } from 'knex-paginate'
 
 const environment = process.env.NODE_ENV || 'development'
 const configuration = require('../knexfile')[environment]

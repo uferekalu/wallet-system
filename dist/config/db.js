@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = require("dotenv");
-const knex_paginate_1 = require("knex-paginate");
 (0, dotenv_1.config)();
+const knex_paginate_1 = require("knex-paginate");
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
 const db = require('knex')(configuration);

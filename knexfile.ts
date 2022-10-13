@@ -1,11 +1,10 @@
 require('ts-node/register')
 import { config } from 'dotenv'
-import Url from 'url-parse'
 
 // Environment Variable Configuration 
 config()
 
-export = {
+module.exports = {
     development: {
         client: 'mysql',
         connection: {
@@ -38,5 +37,6 @@ export = {
         migrations: {
             tableName: 'knex_migrations'
         }
-    }
+    },
+    
 }
